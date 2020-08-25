@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS", "MAS\MAS.csproj", "{E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Agents", "MAS.Agents\MAS.Agents.csproj", "{F15BB570-246D-4DAE-A8DB-3735A4E8D3A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Items", "MAS.Items\MAS.Items.csproj", "{01BB9D02-3B99-4DC3-A9F0-5E6AD5E45CB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F15BB570-246D-4DAE-A8DB-3735A4E8D3A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F15BB570-246D-4DAE-A8DB-3735A4E8D3A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F15BB570-246D-4DAE-A8DB-3735A4E8D3A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01BB9D02-3B99-4DC3-A9F0-5E6AD5E45CB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01BB9D02-3B99-4DC3-A9F0-5E6AD5E45CB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01BB9D02-3B99-4DC3-A9F0-5E6AD5E45CB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01BB9D02-3B99-4DC3-A9F0-5E6AD5E45CB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
