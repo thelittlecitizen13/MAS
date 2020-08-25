@@ -17,5 +17,9 @@
         {
             return true;
         }
+        public void PrintToPersonalScreen(string message)
+        {
+            System.Console.WriteLine(message);
+        }
     }
 }
