@@ -14,12 +14,12 @@ namespace MAS
             CurrentPrice = currentPrice;
             MinimunPriceJump = minimunPriceJump;
         }
-        public bool UpdateBet(int newPrice, Agent bettingAgent)
+        public bool UpdateBet(AgentBet bet)
         {
-           if (newPrice >= CurrentPrice + MinimunPriceJump)
+           if (bet.NewPrice >= CurrentPrice + MinimunPriceJump)
             {
-                CurrentPrice = newPrice;
-                BetHolder = bettingAgent;
+                CurrentPrice = bet.NewPrice;
+                BetHolder = bet.BettingAgent;
                 return true;
             }
             return false;

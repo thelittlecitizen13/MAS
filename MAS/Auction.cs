@@ -15,16 +15,20 @@ namespace MAS
         public DateTime StartDate{ get; set; }
         public bool IsActive { get; set; }
         public AuctionBet CurrentBet { get; private set; }
-        public void MakeBet(int newPrice, Agent bettingAgent)
+        public void MakeBet(AgentBet bet)
         {
             if (!IsActive)
             {
                 return;
             }
-            if (CurrentBet.UpdateBet(newPrice, bettingAgent))
+            if (CurrentBet.UpdateBet(bet))
             {
-                NotifyAgents?.Invoke($"{bettingAgent.Name} is now leading the auction over {Item.Name} with price tag of {newPrice}$");
+                NotifyChange($"{bet.BettingAgent.Name} is now leading the auction over {Item.Name} with price tag of {bet.NewPrice}$");
             }
+        }
+        public void NotifyChange(string message)
+        {
+            NotifyAgents?.Invoke(message);
         }
     }
 }
