@@ -5,4 +5,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MAS.Agents\MAS.Agents.csproj" />
+    <ProjectReference Include="..\MAS.Items\MAS.Items.csproj" />
+  </ItemGroup>
+
 </Project>

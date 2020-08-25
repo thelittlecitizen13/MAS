@@ -9,4 +9,5 @@ namespace MAS
             Console.WriteLine("Hello World!");
         }
     }
+    public delegate void Notify(string message);
 }
