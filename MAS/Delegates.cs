@@ -6,5 +6,5 @@ using System.Text;
 namespace MAS
 {
     public delegate void Notify(string message);
-    public delegate void AskForBets(string message, Auction item);
+    public delegate AgentBet AskForBets(string message);
 }
