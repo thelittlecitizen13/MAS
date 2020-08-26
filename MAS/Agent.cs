@@ -38,7 +38,8 @@ namespace MAS
             Cash -= productPrice;
             _ownedProducts.Add(product);
             PrintToPersonalScreen($"You now have {Cash}$ left");
-            PrintToPersonalScreen($"Owned prodcts: {String.Format(", ", _ownedProducts.Select(p => p.Name).ToList())}");
+            string ownProducts = string.Join(", ", (_ownedProducts.Select(p => p.Name).ToList()));
+            PrintToPersonalScreen($"Owned prodcts: {ownProducts}");
         }
     }
 }

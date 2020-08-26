@@ -90,6 +90,7 @@ namespace MAS
         }
         private void EndAuction(Auction auction)
         {
+            
             auction.IsOver = true;
             auction.IsActive = false;
             if (auction.CurrentBet.BetHolder == null)

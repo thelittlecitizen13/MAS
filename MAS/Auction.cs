@@ -84,7 +84,7 @@ namespace MAS
         public void ShowWinner()
         {
             Agent winner = CurrentBet.BetHolder;
-            if (winner == null)
+            if (winner is null)
             {
                 Console.WriteLine($"No winner for {Item.Name} auction!");
             }
