@@ -10,10 +10,12 @@ namespace MAS
     {
         public string Name { get; set; }
         public int Cash { get; set; }
-        private int _availableCash { get; set; }
+        private int _availableCash;
+        private bool _isBetOnGoing;
         private ConsoleColor _consoleColor;
         private static Random _random = new Random();
         private List<IAuctionItem> _ownedProducts;
+        private static object _MakeBetLocker = new object();
         public Agent(string name, int cash)
         {
             Name = name;
@@ -24,17 +26,20 @@ namespace MAS
         }
         public void MakeBet(string message, Auction auction)   
         {
-            int currentBet = auction.CurrentBet.CurrentPrice;
-            int priceJump = auction.CurrentBet.MinimunPriceJump;
-            if (DoJoin(auction.Item) && (Cash >= currentBet + priceJump))
+            lock (_MakeBetLocker)
             {
-                int newBetPrice = generateNewBetPrice(currentBet + priceJump);
+                int currentBet = auction.CurrentBet.CurrentPrice;
+                int priceJump = auction.CurrentBet.MinimunPriceJump;
+                if (DoJoin(auction.Item, currentBet + priceJump, auction.StartPrice))
+                {
+                    int newBetPrice = generateNewBetPrice(currentBet + priceJump);
 
-                auction.MakeBet(new AgentBet(newBetPrice, this));
+                    auction.MakeBet(new AgentBet(newBetPrice, this));
+                }
             }
         }
         protected abstract int generateNewBetPrice(int minimunBet);
-        public abstract bool DoJoin(IAuctionItem item);
+        public abstract bool DoJoin(IAuctionItem item, int currentBid, int startPrice);
         public void PrintToPersonalScreen(string message)
         {
             Console.ForegroundColor = _consoleColor;

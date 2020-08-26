@@ -73,7 +73,7 @@ namespace MAS
             Parallel.ForEach(_listedAgents, (agent) =>
             {
                 Thread.CurrentThread.IsBackground = false;
-                if (agent.DoJoin(auction.Item))
+                if (agent.DoJoin(auction.Item, 0, auction.StartPrice))
                     auction.addAgentToAuction(agent);
             });
             
