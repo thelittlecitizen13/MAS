@@ -20,7 +20,7 @@ namespace MAS
             SB.AppendLine("New Action!!");
             SB.AppendLine(auction.ToString());
             SB.AppendLine($"Would you like to join?");
-            NotifyAgents?.Invoke($"");
+            NotifyAgents?.Invoke(SB.ToString());
             List<Agent> auctionAgents = new List<Agent>();
             Parallel.ForEach(ListedAgents, (agent) =>
             {

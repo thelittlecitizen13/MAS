@@ -2,6 +2,7 @@
 using MAS.Items;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MAS
@@ -36,9 +37,9 @@ namespace MAS
             var agentsInvocationLis = GetAgentsBets.GetInvocationList();
             Parallel.ForEach(agentsInvocationLis, (agentMetod) =>
             {
-                agentMetod.DynamicInvoke("bla");
+                agentMetod.DynamicInvoke($"Would you like to bet on {Item.Name}? Minimun bet: {CurrentBet.CurrentPrice + CurrentBet.MinimunPriceJump}$");
             });
-            //GetAgentsBets?.Invoke($"Would you like to bet on {Item.Name}? Minimun bet: {CurrentBet.CurrentPrice + CurrentBet.MinimunPriceJump}$", this);
+            //GetAgentsBets?.Invoke(, this);
         }
         public void addAgentToAuction(Agent agent)
         {
@@ -49,7 +50,11 @@ namespace MAS
         }
         public override string ToString()
         {
-            
+            StringBuilder SB = new StringBuilder();
+            SB.AppendLine($"Action for item '{Item.Name}'");
+            SB.AppendLine($"Details about the product:");
+            SB.AppendLine(Item.ToString());
+            return SB.ToString() ;
         }
     }
 }
