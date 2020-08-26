@@ -10,6 +10,7 @@ namespace MAS
     {
         public string Name { get; set; }
         public int Cash { get; set; }
+        private int _availableCash { get; set; }
         private ConsoleColor _consoleColor;
         private static Random _random = new Random();
         private List<IAuctionItem> _ownedProducts;
@@ -17,10 +18,22 @@ namespace MAS
         {
             Name = name;
             Cash = cash;
+            _availableCash = Cash;
             _consoleColor = chooseConsoleColor();
             _ownedProducts = new List<IAuctionItem>();
         }
-        public abstract void MakeBet(string message, Auction auction);
+        public void MakeBet(string message, Auction auction)   
+        {
+            int currentBet = auction.CurrentBet.CurrentPrice;
+            int priceJump = auction.CurrentBet.MinimunPriceJump;
+            if (DoJoin(auction.Item) && (Cash >= currentBet + priceJump))
+            {
+                int newBetPrice = generateNewBetPrice(currentBet + priceJump);
+
+                auction.MakeBet(new AgentBet(newBetPrice, this));
+            }
+        }
+        protected abstract int generateNewBetPrice(int minimunBet);
         public abstract bool DoJoin(IAuctionItem item);
         public void PrintToPersonalScreen(string message)
         {
