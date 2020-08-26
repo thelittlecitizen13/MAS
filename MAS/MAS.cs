@@ -14,6 +14,11 @@ namespace MAS
         public List<Auction> Auctions { get; set; }
         public List<Agent> ListedAgents { get; set; }
         public event Notify NotifyAgents;
+        public MAS()
+        {
+            Auctions = new List<Auction>();
+            ListedAgents = new List<Agent>();
+        }
         public void Start()
         {
             //System.Timers.Timer runAuctionsTimer = SetInterval(RunAuctions, 10);

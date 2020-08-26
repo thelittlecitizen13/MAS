@@ -15,6 +15,7 @@ namespace MAS
             MamasAuction.ListedAgents.Add(segevH);
             MamasAuction.ListedAgents.Add(segevG);
             MamasAuction.Auctions.Add(screenAuction);
+            MamasAuction.Start();
 
         }
     }
