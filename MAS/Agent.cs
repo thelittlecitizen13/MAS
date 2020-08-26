@@ -2,6 +2,7 @@
 using MAS.Items;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MAS
 {
@@ -24,7 +25,6 @@ namespace MAS
         public void PrintToPersonalScreen(string message)
         {
             Console.ForegroundColor = _consoleColor;
-            System.Console.WriteLine(Name);
             System.Console.WriteLine($"{Name}: {message}");
             Console.ResetColor();
         }
@@ -38,7 +38,7 @@ namespace MAS
             Cash -= productPrice;
             _ownedProducts.Add(product);
             PrintToPersonalScreen($"You now have {Cash}$ left");
-            PrintToPersonalScreen($"Owned prodcts: {String.Format(", ", _ownedProducts)}");
+            PrintToPersonalScreen($"Owned prodcts: {String.Format(", ", _ownedProducts.Select(p => p.Name).ToList())}");
         }
     }
 }

@@ -53,8 +53,8 @@ namespace MAS
                         }
                     }
                 }
-                auction.IsOver = true;
-                auction.ShowWinner();
+                EndAuction(auction);
+                
             });
             if (Auctions?.Where(auc => auc.IsOver == true).ToList().Count == Auctions.Count)
             {
@@ -76,6 +76,8 @@ namespace MAS
                 if (agent.DoJoin(auction.Item))
                     auction.addAgentToAuction(agent);
             });
+            
+
             if (auction.Participants.Count == 0)
             {
                 EndAuction(auction);
@@ -90,6 +92,13 @@ namespace MAS
         {
             auction.IsOver = true;
             auction.IsActive = false;
+            if (auction.CurrentBet.BetHolder == null)
+            {
+                return;
+            }
+            auction.CurrentBet.BetHolder.BuyProduct(auction.Item, auction.CurrentBet.CurrentPrice);
+            auction.ShowWinner();
+
         }
         private void updateNextAuctions()
         {

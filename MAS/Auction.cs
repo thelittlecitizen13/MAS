@@ -20,7 +20,7 @@ namespace MAS
         public DateTime StartDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsOver { get; set; }
-
+        private static object _lockMakeBet = new object();
 
         public Auction(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
         {
@@ -36,13 +36,19 @@ namespace MAS
         
         public void MakeBet(AgentBet bet)
         {
-            if (!IsActive && CurrentBet.BetHolder != bet.BettingAgent)
+            lock (_lockMakeBet)
             {
-                return;
-            }
-            if (CurrentBet.UpdateBet(bet))
-            {
-                NotifyChange($"{bet.BettingAgent.Name} is now leading the auction over {Item.Name} with price tag of {bet.NewPrice}$");
+                if (!IsActive)
+                {
+                    return;
+                }
+                else
+                {
+                    if (CurrentBet.UpdateBet(bet))
+                    {
+                        NotifyChange($"{bet.BettingAgent.Name} is now leading the auction over {Item.Name} with price tag of {bet.NewPrice}$");
+                    }
+                }
             }
         }
         public void NotifyChange(string message)
@@ -88,6 +94,7 @@ namespace MAS
                 Console.WriteLine($"{CurrentBet.BetHolder.Name} wins the auction of {Item.Name} for {CurrentBet.CurrentPrice}$ ");
                 Console.ResetColor();
                 CurrentBet.BetHolder.PrintToPersonalScreen($"Congratulations {CurrentBet.BetHolder.Name}! You won {Item.Name} for {CurrentBet.CurrentPrice}$ ");
+                
             }
         }
     }

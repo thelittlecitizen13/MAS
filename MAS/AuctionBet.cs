@@ -9,6 +9,7 @@ namespace MAS
         public DateTime? BetTime { get; set; }
         public int CurrentPrice { get; set; }
         public int MinimunPriceJump { get; set; }
+        private static object _lockUpdateBet = new object();
         public AuctionBet(int currentPrice, int minimunPriceJump, DateTime betTime)
         {
             CurrentPrice = currentPrice;
@@ -17,13 +18,28 @@ namespace MAS
         }
         public bool UpdateBet(AgentBet bet)
         {
-           if (bet.NewPrice >= CurrentPrice + MinimunPriceJump)
+            lock (_lockUpdateBet)
             {
-                CurrentPrice = bet.NewPrice;
-                BetHolder = bet.BettingAgent;
-                return true;
+                if ((bet.NewPrice >= CurrentPrice + MinimunPriceJump))
+                {
+                    if (BetHolder == null)
+                    {
+                        CurrentPrice = bet.NewPrice;
+                        BetHolder = bet.BettingAgent;
+                        return true;
+                    }
+                    else
+                    {
+                        if (bet.BettingAgent.Name != BetHolder.Name)
+                        {
+                            CurrentPrice = bet.NewPrice;
+                            BetHolder = bet.BettingAgent;
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
-            return false;
         }
         
     }
