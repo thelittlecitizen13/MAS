@@ -9,10 +9,11 @@ namespace MAS
         public DateTime? BetTime { get; set; }
         public int CurrentPrice { get; set; }
         public int MinimunPriceJump { get; set; }
-        public AuctionBet(int currentPrice, int minimunPriceJump)
+        public AuctionBet(int currentPrice, int minimunPriceJump, DateTime betTime)
         {
             CurrentPrice = currentPrice;
             MinimunPriceJump = minimunPriceJump;
+            BetTime = betTime;
         }
         public bool UpdateBet(AgentBet bet)
         {

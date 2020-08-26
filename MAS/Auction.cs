@@ -14,10 +14,24 @@ namespace MAS
         public event Notify NotifyAgents;
         public event AskForBets GetAgentsBets;
         public int StartPrice { get; set; }
-        public DateTime StartDate{ get; set; }
+        public AuctionBet CurrentBet { get; private set; }
+        public DateTime StartDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsOver { get; set; }
-        public AuctionBet CurrentBet { get; private set; }
+
+
+        public Auction(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
+        {
+            Item = auctionItem;
+            Participants = new List<Agent>();
+            IsActive = false;
+            IsOver = false;
+            StartDate = startDate;
+            CurrentBet = new AuctionBet(startPrice, minimunJumpPrice, startDate);
+        }
+        
+
+        
         public void MakeBet(AgentBet bet)
         {
             if (!IsActive)
