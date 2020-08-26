@@ -49,19 +49,20 @@ namespace MAS
         }
         public void AskForNewBets()
         {
-            var agentsInvocationLis = GetAgentsBets.GetInvocationList();
-            Parallel.ForEach(agentsInvocationLis, (agentMetod) =>
-            {
-                agentMetod.DynamicInvoke($"Would you like to bet on {Item.Name}? Minimun bet: {CurrentBet.CurrentPrice + CurrentBet.MinimunPriceJump}$");
-            });
-            //GetAgentsBets?.Invoke(, this);
+            
+            //var agentsInvocationLis = GetAgentsBets?.GetInvocationList();
+            //Parallel.ForEach(agentsInvocationLis, (agentMetod) =>
+            //{
+            //    agentMetod.DynamicInvoke($"Would you like to bet on {Item.Name}? Minimun bet: {CurrentBet.CurrentPrice + CurrentBet.MinimunPriceJump}$");
+            //});
+            GetAgentsBets?.Invoke($"Would you like to bet on {Item.Name}? Minimun bet: {CurrentBet.CurrentPrice + CurrentBet.MinimunPriceJump}$", this);
         }
         public void addAgentToAuction(Agent agent)
         {
             Participants.Add(agent);
             agent.PrintToPersonalScreen($"Welcome to {Item.Name}`s auction!");
             NotifyAgents += agent.PrintToPersonalScreen;
-            // add to GetAgentsBets event
+            GetAgentsBets += agent.MakeBet;
 
         }
         public override string ToString()

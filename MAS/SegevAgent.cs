@@ -15,7 +15,7 @@ namespace MAS
             return rand.Next(0, 100) < 70;
         }
 
-        public override void MakeBet(Auction auction)
+        public override void MakeBet(string message, Auction auction)
         {
             int currentBet = auction.CurrentBet.CurrentPrice;
             int priceJump = auction.CurrentBet.MinimunPriceJump;

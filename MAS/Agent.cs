@@ -13,7 +13,7 @@ namespace MAS
             Name = name;
             Cash = cash;
         }
-        public abstract void MakeBet(Auction auction);
+        public abstract void MakeBet(string message, Auction auction);
         public abstract bool DoJoin(IAuctionItem item);
         public void PrintToPersonalScreen(string message)
         {

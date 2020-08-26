@@ -15,8 +15,19 @@ namespace MAS
             MamasAuction.ListedAgents.Add(segevH);
             MamasAuction.ListedAgents.Add(segevG);
             MamasAuction.Auctions.Add(screenAuction);
-            MamasAuction.Start();
+            System.Timers.Timer runAuctionsTimer = SetInterval(MamasAuction.Start, 10);
+            Console.Read();
 
+        }
+        private static System.Timers.Timer SetInterval(Action Act, int Interval)
+        {
+            System.Timers.Timer tmr = new System.Timers.Timer();
+            tmr.Elapsed += (sender, args) => Act();
+            tmr.AutoReset = true;
+            tmr.Interval = Interval;
+            tmr.Start();
+
+            return tmr;
         }
     }
     
