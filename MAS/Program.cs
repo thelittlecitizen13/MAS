@@ -10,11 +10,14 @@ namespace MAS
             MAS MamasAuction = new MAS();
             SegevAgent segevG = new SegevAgent("SegevG Course", 5000);
             SegevAgent segevH = new SegevAgent("SegevH Course", 5000);
-            Screen screen = new Screen("HP Elite", "21inch 4K Screen", 111);
-            Auction screenAuction = new Auction(screen, DateTime.Now.AddSeconds(10), 1000, 100);
+            Screen screen21 = new Screen("HP Elite", "21inch 4K Screen", 111);
+            Screen screen24 = new Screen("BenQ", "24inch 4K Screen", 112);
+            Auction screenAuction21 = new Auction(screen21, DateTime.Now.AddSeconds(10), 1000, 100);
+            Auction screenAuction24 = new Auction(screen24, DateTime.Now.AddSeconds(10), 1, 1);
             MamasAuction.AddAgent(segevH);
             MamasAuction.AddAgent(segevG);
-            MamasAuction.Auctions.Add(screenAuction);
+            MamasAuction.Auctions.Add(screenAuction21);
+            MamasAuction.Auctions.Add(screenAuction24);
             MamasAuction.Start();
             Console.Read();
 
