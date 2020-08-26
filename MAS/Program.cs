@@ -7,7 +7,10 @@ namespace MAS
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            MAS MamasAuction = new MAS();
+            SegevAgent segev = new SegevAgent("SegevCourse", 5000);
+
+
         }
     }
     
