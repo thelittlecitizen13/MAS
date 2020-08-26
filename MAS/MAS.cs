@@ -29,6 +29,7 @@ namespace MAS
         {
             Parallel.ForEach(nextAuctions, auction =>
             {
+                StartNextAuction(auction);
                 Stopwatch auctionStopwatch = new Stopwatch();
                 auctionStopwatch.Start();
                 while (auctionStopwatch.ElapsedMilliseconds < 10000)

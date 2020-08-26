@@ -47,6 +47,7 @@ namespace MAS
             Participants.Add(agent);
             agent.PrintToPersonalScreen($"Welcome to {Item.Name}`s auction!");
             NotifyAgents += agent.PrintToPersonalScreen;
+            // add to GetAgentsBets event
 
         }
         public override string ToString()
