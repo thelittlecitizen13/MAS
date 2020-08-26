@@ -34,28 +34,30 @@ namespace MAS
         {
             Parallel.ForEach(nextAuctions, auction =>
             {
-                StartNextAuction(auction);
-                Stopwatch auctionStopwatch = new Stopwatch();
-                auctionStopwatch.Start();
-                while (auctionStopwatch.ElapsedMilliseconds < 10000)
+                if (StartNextAuction(auction))
                 {
-                    DateTime? currentBetTime = auction.CurrentBet.BetTime;
-                    
-                    if (auctionStopwatch.ElapsedMilliseconds < 2000)
-                        auction.NotifyChange("Less then 2 seconds remaining for the auction!");
-                    auction.AskForNewBets();
-                    Thread.Sleep(500); // Let the agents make bets
-                    DateTime? newBetTime = auction.CurrentBet.BetTime;
-                    if (newBetTime != currentBetTime)
+                    Stopwatch auctionStopwatch = new Stopwatch();
+                    auctionStopwatch.Start();
+                    while (auctionStopwatch.ElapsedMilliseconds < 10000)
                     {
-                        auctionStopwatch.Reset();
-                        auctionStopwatch.Start();
+                        DateTime? currentBetTime = auction.CurrentBet.BetTime;
+
+                        if (auctionStopwatch.ElapsedMilliseconds < 2000)
+                            auction.NotifyChange("Less then 2 seconds remaining for the auction!");
+                        auction.AskForNewBets();
+                        Thread.Sleep(500); // Let the agents make bets
+                        DateTime? newBetTime = auction.CurrentBet.BetTime;
+                        if (newBetTime != currentBetTime)
+                        {
+                            auctionStopwatch.Reset();
+                            auctionStopwatch.Start();
+                        }
                     }
                 }
                 auction.ShowWinner();
             });
         }
-        private void StartNextAuction(Auction auction)
+        private bool StartNextAuction(Auction auction)
         {
             StringBuilder SB = new StringBuilder();
             SB.AppendLine("New Action!!");
@@ -68,6 +70,13 @@ namespace MAS
                 if (agent.DoJoin(auction.Item))
                     auction.addAgentToAuction(agent);
             });
+            if (auction.Participants.Count == 0)
+            {
+                EndAuction(auction);
+                Console.WriteLine($"Auction over {auction.Item.Name}, UID {auction.Item.UniqueID} is closed due to no participants.");
+                return false;
+            }
+            return true;
             
         }
         private void EndAuction(Auction Auction)
