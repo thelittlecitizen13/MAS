@@ -12,22 +12,24 @@ namespace MAS
     class MAS
     {
         public List<Auction> Auctions { get; set; }
-        private List<Agent> _listedAgents { get; set; }
+        private List<Agent> _listedAgents;
+        private List<Auction> _dueToBeginAuctions;
         private event Notify _notifyAgents;
         public MAS()
         {
             Auctions = new List<Auction>();
             _listedAgents = new List<Agent>();
+            _dueToBeginAuctions = new List<Auction>();
         }
         public void Start()
         {
             
-            List<Auction> yetStartedAuctions = getNextAuctions();
-            while (yetStartedAuctions != null && yetStartedAuctions.Count != 0)
+            updateNextAuctions();
+            while (_dueToBeginAuctions != null && _dueToBeginAuctions.Count != 0)
             {
-                RunAuctions(yetStartedAuctions);
+                RunAuctions(_dueToBeginAuctions);
                 Thread.Sleep(10000);
-                yetStartedAuctions = getNextAuctions();
+                updateNextAuctions();
             }
         }
         public void RunAuctions(List<Auction> nextAuctions)
@@ -36,6 +38,7 @@ namespace MAS
             {
                 if (StartNextAuction(auction))
                 {
+                    _dueToBeginAuctions.Remove(auction);
                     Stopwatch auctionStopwatch = new Stopwatch();
                     auctionStopwatch.Start();
                     while (auctionStopwatch.ElapsedMilliseconds < 10000)
@@ -76,17 +79,23 @@ namespace MAS
                 Console.WriteLine($"Auction over {auction.Item.Name}, UID {auction.Item.UniqueID} is closed due to no participants.");
                 return false;
             }
+            auction.IsActive = true;
             return true;
             
         }
-        private void EndAuction(Auction Auction)
+        private void EndAuction(Auction auction)
         {
-            // Change Is Over
+            auction.IsOver = true;
+            auction.IsActive = false;
         }
-        private List<Auction> getNextAuctions()
+        private void updateNextAuctions()
         {
-            List<Auction> nextAuctions = Auctions.Where(auc => auc.IsActive == false && auc.IsOver == false && auc.StartDate < DateTime.Now).ToList();
-            return nextAuctions;
+            List<Auction> nextAuctions = Auctions.Where(auc => auc.IsActive == false && auc.IsOver == false && 
+            auc.StartDate < DateTime.Now && !_dueToBeginAuctions.Contains(auc)).ToList();
+            foreach (var auc in nextAuctions)
+            {
+                _dueToBeginAuctions.Add(auc);
+            }
         }
         
         public void AddAgent(Agent agent)

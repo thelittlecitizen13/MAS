@@ -2,6 +2,8 @@
 using MAS.Items;
 using System;
 using System.Collections.Generic;
+using System.Net.WebSockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -75,7 +77,18 @@ namespace MAS
         }
         public void ShowWinner()
         {
-
+            Agent winner = CurrentBet.BetHolder;
+            if (winner == null)
+            {
+                Console.WriteLine($"No winner for {Item.Name} auction!");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"{CurrentBet.BetHolder.Name} wins the auction of {Item.Name} for {CurrentBet.CurrentPrice}$ ");
+                Console.ResetColor();
+                CurrentBet.BetHolder.PrintToPersonalScreen($"Congratulations {CurrentBet.BetHolder.Name}! You won {Item.Name} for {CurrentBet.CurrentPrice}$ ");
+            }
         }
     }
 }
