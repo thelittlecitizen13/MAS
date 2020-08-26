@@ -16,6 +16,7 @@ namespace MAS
         public int StartPrice { get; set; }
         public DateTime StartDate{ get; set; }
         public bool IsActive { get; set; }
+        public bool IsOver { get; set; }
         public AuctionBet CurrentBet { get; private set; }
         public void MakeBet(AgentBet bet)
         {
@@ -55,6 +56,10 @@ namespace MAS
             SB.AppendLine($"Details about the product:");
             SB.AppendLine(Item.ToString());
             return SB.ToString() ;
+        }
+        public void ShowWinner()
+        {
+
         }
     }
 }
