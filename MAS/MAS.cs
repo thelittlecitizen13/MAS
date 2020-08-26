@@ -15,6 +15,7 @@ namespace MAS
         private List<Agent> _listedAgents;
         private List<Auction> _dueToBeginAuctions;
         private event Notify _notifyAgents;
+        private System.Timers.Timer _runAuctionsTimer { get; set; }
         public MAS()
         {
             Auctions = new List<Auction>();
@@ -22,19 +23,14 @@ namespace MAS
             _dueToBeginAuctions = new List<Auction>();
         }
         public void Start()
-        {
-            
-            updateNextAuctions();
-            while (_dueToBeginAuctions != null && _dueToBeginAuctions.Count != 0)
-            {
-                RunAuctions(_dueToBeginAuctions);
-                Thread.Sleep(10000);
-                updateNextAuctions();
-            }
+        { 
+            _runAuctionsTimer = SetInterval(RunAuctions, 5000);
         }
-        public void RunAuctions(List<Auction> nextAuctions)
+        public void RunAuctions()
         {
-            Parallel.ForEach(nextAuctions, auction =>
+            updateNextAuctions();
+            List<Auction> nextAuctions = new List<Auction>(_dueToBeginAuctions);
+            Parallel.ForEach(nextAuctions ?? new List<Auction>(), auction =>
             {
                 if (StartNextAuction(auction))
                 {
@@ -44,8 +40,8 @@ namespace MAS
                     while (auctionStopwatch.ElapsedMilliseconds < 10000)
                     {
                         DateTime? currentBetTime = auction.CurrentBet.BetTime;
-
-                        if (auctionStopwatch.ElapsedMilliseconds < 2000)
+                        Thread.CurrentThread.IsBackground = false;
+                        if (auctionStopwatch.ElapsedMilliseconds > 8000)
                             auction.NotifyChange("Less then 2 seconds remaining for the auction!");
                         auction.AskForNewBets();
                         Thread.Sleep(500); // Let the agents make bets
@@ -57,8 +53,14 @@ namespace MAS
                         }
                     }
                 }
+                auction.IsOver = true;
                 auction.ShowWinner();
             });
+            if (Auctions?.Where(auc => auc.IsOver == true).ToList().Count == Auctions.Count)
+            {
+                _notifyAgents?.Invoke("All auctions are over. See you next Time!");
+                _runAuctionsTimer.Stop();
+            }
         }
         private bool StartNextAuction(Auction auction)
         {
@@ -70,6 +72,7 @@ namespace MAS
             List<Agent> auctionAgents = new List<Agent>();
             Parallel.ForEach(_listedAgents, (agent) =>
             {
+                Thread.CurrentThread.IsBackground = false;
                 if (agent.DoJoin(auction.Item))
                     auction.addAgentToAuction(agent);
             });
@@ -102,6 +105,17 @@ namespace MAS
         {
             _notifyAgents += agent.PrintToPersonalScreen;
             _listedAgents.Add(agent);
+        }
+
+        private static System.Timers.Timer SetInterval(Action Act, int Interval)
+        {
+            System.Timers.Timer tmr = new System.Timers.Timer();
+            tmr.Elapsed += (sender, args) => Act();
+            tmr.AutoReset = true;
+            tmr.Interval = Interval;
+            tmr.Start();
+
+            return tmr;
         }
     }
 }

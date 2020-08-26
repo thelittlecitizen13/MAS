@@ -23,7 +23,7 @@ namespace MAS
         {
             Console.ForegroundColor = _consoleColor;
             System.Console.WriteLine(Name);
-            System.Console.WriteLine(message);
+            System.Console.WriteLine($"{Name}: {message}");
             Console.ResetColor();
         }
         private ConsoleColor chooseConsoleColor()

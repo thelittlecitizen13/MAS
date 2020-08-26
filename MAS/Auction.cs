@@ -36,7 +36,7 @@ namespace MAS
         
         public void MakeBet(AgentBet bet)
         {
-            if (!IsActive)
+            if (!IsActive && CurrentBet.BetHolder != bet.BettingAgent)
             {
                 return;
             }
