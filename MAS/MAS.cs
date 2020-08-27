@@ -15,6 +15,7 @@ namespace MAS
         private List<Agent> _listedAgents;
         private List<AuctionRunner> _dueToBeginAuctions;
         private AgentNotifier _notifier;
+        private AuctionRunnerFactory _auctionRunnerFactory;
         private System.Timers.Timer _runAuctionsTimer { get; set; }
         public MAS()
         {
@@ -22,6 +23,7 @@ namespace MAS
             _listedAgents = new List<Agent>();
             _dueToBeginAuctions = new List<AuctionRunner>();
             _notifier = new AgentNotifier();
+            _auctionRunnerFactory = new AuctionRunnerFactory();
         }
         public void Start()
         {
@@ -79,7 +81,8 @@ namespace MAS
         }
         public void CreateAuction(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
         {
-            AuctionRunners.Add(new AuctionRunner(auctionItem, startDate, startPrice, minimunJumpPrice));
+            
+            AuctionRunners.Add(_auctionRunnerFactory.CreateAuctionRunner(auctionItem, startDate, startPrice, minimunJumpPrice));
         }
         private static System.Timers.Timer SetInterval(Action Act, int Interval)
         {

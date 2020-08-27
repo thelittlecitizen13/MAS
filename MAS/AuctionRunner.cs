@@ -13,12 +13,14 @@ namespace MAS
         private static object _lockMakeBet = new object();
         public Auction auction { get; set; }
         private AgentNotifier _notifier;
+        private int AuctionStage;
 
-        public AuctionRunner(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
+        public AuctionRunner(Auction auc)
         {
-            auction = new Auction(auctionItem, startDate, startPrice, minimunJumpPrice);
+            auction = auc;
             Participants = new ConcurrentBag<Agent>();
             _notifier = new AgentNotifier();
+            AuctionStage = 1;
         }
         public void RunAuction()
         {
@@ -34,18 +36,18 @@ namespace MAS
             {
                 DateTime lastBetTime = auction.CurrentBet.BetTime.Value;
 
-                if (lastBetTime.AddSeconds(5) < DateTime.Now && auction.AuctionStage != 4)
+                if (lastBetTime.AddSeconds(5) < DateTime.Now && AuctionStage != 4)
                 {
-                    auction.AuctionStage = 4;
+                    AuctionStage = 4;
                     _notifier.NotifyChange($"Last call for {auction.Item.Name} auction! Less then 3 seconds remaining for ");
                 }
                 AskForNewBets();
                 Thread.Sleep(1000);
                 if (lastBetTime.AddSeconds(5) > DateTime.Now)
                 {
-                    auction.AuctionStage = 3;
+                    AuctionStage = 3;
                 }
-                if (lastBetTime.AddSeconds(8) < DateTime.Now && auction.AuctionStage == 4)
+                if (lastBetTime.AddSeconds(8) < DateTime.Now && AuctionStage == 4)
                 {
                     EndAuction();
                 }
@@ -106,7 +108,7 @@ namespace MAS
 
         public void EndAuction()
         {
-            auction.AuctionStage = 5;
+            AuctionStage = 5;
             auction.IsOver = true;
             auction.IsActive = false;
             if (auction.CurrentBet.BetHolder == null)
