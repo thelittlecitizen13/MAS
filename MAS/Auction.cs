@@ -31,9 +31,7 @@ namespace MAS
             AuctionStage = 1;
             CurrentBet = new AuctionBet(startPrice, minimunJumpPrice, startDate);
         }
-        
 
-        
         public void MakeBet(AgentBet bet)
         {
             lock (_lockMakeBet)
@@ -73,8 +71,6 @@ namespace MAS
             GetAgentsBets += agent.MakeBet;
 
         }
-        
-
         
         public override string ToString()
         {
