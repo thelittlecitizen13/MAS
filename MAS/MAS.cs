@@ -43,7 +43,7 @@ namespace MAS
                         if (lastBetTime.AddSeconds(5) < DateTime.Now && auction.AuctionStage != 4)
                         {
                             auction.AuctionStage = 4;
-                            auction.NotifyChange($"Last call for {auction.Item.Name} auction! Less then 2 seconds remaining for ");
+                            auction.NotifyChange($"Last call for {auction.Item.Name} auction! Less then 3 seconds remaining for ");
                         }
                         auction.AskForNewBets();
                         Thread.Sleep(1000);
