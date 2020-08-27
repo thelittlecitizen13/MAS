@@ -1,6 +1,4 @@
-﻿using MAS.Agents;
-
-namespace MAS
+﻿namespace MAS
 {
     public class AgentBet
     {
