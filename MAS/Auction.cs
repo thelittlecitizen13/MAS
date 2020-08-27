@@ -85,7 +85,7 @@ namespace MAS
             StringBuilder SB = new StringBuilder();
             SB.AppendLine($"Action for item '{Item.Name}'");
             SB.AppendLine($"Details about the product:");
-            SB.AppendLine(Item.ToString());
+            SB.AppendLine(Item.Description());
             return SB.ToString() ;
         }
         public void ShowWinner()
