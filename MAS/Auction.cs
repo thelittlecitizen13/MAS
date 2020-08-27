@@ -1,7 +1,9 @@
 ﻿using MAS.Agents;
 using MAS.Items;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,7 +13,7 @@ namespace MAS
 {
     public class Auction
     {
-        public List<Agent> Participants { get; set; }
+        public ConcurrentBag<Agent> Participants { get; set; }
         public IAuctionItem Item { get; private set; }
         public event Notify NotifyAgents;
         public event AskForBets GetAgentsBets;
@@ -20,12 +22,13 @@ namespace MAS
         public DateTime StartDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsOver { get; set; }
+        public Stopwatch auctionStopwatch { get; set; }
         private static object _lockMakeBet = new object();
 
         public Auction(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
         {
             Item = auctionItem;
-            Participants = new List<Agent>();
+            Participants = new ConcurrentBag<Agent>();
             IsActive = false;
             IsOver = false;
             StartDate = startDate;

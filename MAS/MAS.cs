@@ -32,6 +32,8 @@ namespace MAS
             List<Auction> nextAuctions = new List<Auction>(_dueToBeginAuctions);
             Parallel.ForEach(nextAuctions ?? new List<Auction>(), auction =>
             {
+                //Thread.CurrentThread.Join();
+                Thread.CurrentThread.IsBackground = false;
                 if (StartNextAuction(auction))
                 {
                     _dueToBeginAuctions.Remove(auction);
@@ -40,17 +42,22 @@ namespace MAS
                     while (auctionStopwatch.ElapsedMilliseconds < 10000)
                     {
                         DateTime? currentBetTime = auction.CurrentBet.BetTime;
-                        Thread.CurrentThread.IsBackground = false;
+                        
                         if (auctionStopwatch.ElapsedMilliseconds > 8000)
-                            auction.NotifyChange("Less then 2 seconds remaining for the auction!");
+                            auction.NotifyChange($"Less then 2 seconds remaining for {auction.Item.Name} auction!");
                         auction.AskForNewBets();
-                        Thread.Sleep(500); // Let the agents make bets
+                        Thread.Sleep(1000); // Let the agents make bets
                         DateTime? newBetTime = auction.CurrentBet.BetTime;
-                        if (newBetTime != currentBetTime)
+                        if (DateTime.Compare(newBetTime.Value,currentBetTime.Value) > 0)
                         {
+                            
                             auctionStopwatch.Reset();
                             auctionStopwatch.Start();
+                            
                         }
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{10 - auctionStopwatch.ElapsedMilliseconds / 1000} seconds left to {auction.Item.Name} auction");
+                        Console.ResetColor();
                     }
                 }
                 EndAuction(auction);
