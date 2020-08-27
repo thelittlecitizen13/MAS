@@ -14,7 +14,7 @@ namespace MAS.Items
         public bool Balcony { get; set; }
         public bool DiningRoom { get; set; }
 
-        public Office(string name, int rooms, int roomSize, int toilets, int bathrooms, bool isPS5RoomAvailable, bool balcony, bool diningRoom, int UID, string address)
+        public Office(string name, int rooms, int roomSize, int toilets, bool isPS5RoomAvailable, bool balcony, bool diningRoom, int UID, string address)
         {
             Name = name;
             NumberOfRooms = rooms;
