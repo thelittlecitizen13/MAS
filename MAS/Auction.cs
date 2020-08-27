@@ -22,7 +22,7 @@ namespace MAS
         public DateTime StartDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsOver { get; set; }
-        public Stopwatch auctionStopwatch { get; set; }
+        public int AuctionStage { get; set; }
         private static object _lockMakeBet = new object();
 
         public Auction(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
@@ -32,6 +32,7 @@ namespace MAS
             IsActive = false;
             IsOver = false;
             StartDate = startDate;
+            AuctionStage = 1;
             CurrentBet = new AuctionBet(startPrice, minimunJumpPrice, startDate);
         }
         
@@ -76,6 +77,9 @@ namespace MAS
             GetAgentsBets += agent.MakeBet;
 
         }
+        
+
+        
         public override string ToString()
         {
             StringBuilder SB = new StringBuilder();
@@ -99,6 +103,20 @@ namespace MAS
                 CurrentBet.BetHolder.PrintToPersonalScreen($"Congratulations {CurrentBet.BetHolder.Name}! You won {Item.Name} for {CurrentBet.CurrentPrice}$ ");
                 
             }
+        }
+
+        public void EndAuction()
+        {
+            AuctionStage = 5;
+            IsOver = true;
+            IsActive = false;
+            if (CurrentBet.BetHolder == null)
+            {
+                return;
+            }
+            CurrentBet.BetHolder.BuyProduct(Item, CurrentBet.CurrentPrice);
+            ShowWinner();
+
         }
     }
 }

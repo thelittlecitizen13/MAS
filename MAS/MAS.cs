@@ -32,35 +32,35 @@ namespace MAS
             List<Auction> nextAuctions = new List<Auction>(_dueToBeginAuctions);
             Parallel.ForEach(nextAuctions ?? new List<Auction>(), auction =>
             {
-                //Thread.CurrentThread.Join();
                 Thread.CurrentThread.IsBackground = false;
                 if (StartNextAuction(auction))
                 {
                     _dueToBeginAuctions.Remove(auction);
-                    Stopwatch auctionStopwatch = new Stopwatch();
-                    auctionStopwatch.Start();
-                    while (auctionStopwatch.ElapsedMilliseconds < 10000)
+                    while (auction.IsOver == false)
                     {
-                        DateTime? currentBetTime = auction.CurrentBet.BetTime;
+                        DateTime lastBetTime = auction.CurrentBet.BetTime.Value;
                         
-                        if (auctionStopwatch.ElapsedMilliseconds > 8000)
-                            auction.NotifyChange($"Less then 2 seconds remaining for {auction.Item.Name} auction!");
-                        auction.AskForNewBets();
-                        Thread.Sleep(1000); // Let the agents make bets
-                        DateTime? newBetTime = auction.CurrentBet.BetTime;
-                        if (DateTime.Compare(newBetTime.Value,currentBetTime.Value) > 0)
+                        if (lastBetTime.AddSeconds(5) < DateTime.Now && auction.AuctionStage != 4)
                         {
-                            
-                            auctionStopwatch.Reset();
-                            auctionStopwatch.Start();
+                            auction.AuctionStage = 4;
+                            auction.NotifyChange($"Last call for {auction.Item.Name} auction! Less then 2 seconds remaining for ");
+                        }
+                        auction.AskForNewBets();
+                        Thread.Sleep(1000);
+                        if (lastBetTime.AddSeconds(5) > DateTime.Now)
+                        {
+                            auction.AuctionStage = 3;
+                        }
+                        if (lastBetTime.AddSeconds(8) < DateTime.Now && auction.AuctionStage == 4)
+                        {
+                            auction.EndAuction();
                             
                         }
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"{10 - auctionStopwatch.ElapsedMilliseconds / 1000} seconds left to {auction.Item.Name} auction");
-                        Console.ResetColor();
+
+
                     }
                 }
-                EndAuction(auction);
+                
                 
             });
             if (Auctions?.Where(auc => auc.IsOver == true).ToList().Count == Auctions.Count)
@@ -87,7 +87,7 @@ namespace MAS
 
             if (auction.Participants.Count == 0)
             {
-                EndAuction(auction);
+                auction.EndAuction();
                 Console.WriteLine($"Auction over {auction.Item.Name}, UID {auction.Item.UniqueID} is closed due to no participants.");
                 return false;
             }
@@ -95,19 +95,7 @@ namespace MAS
             return true;
             
         }
-        private void EndAuction(Auction auction)
-        {
-            
-            auction.IsOver = true;
-            auction.IsActive = false;
-            if (auction.CurrentBet.BetHolder == null)
-            {
-                return;
-            }
-            auction.CurrentBet.BetHolder.BuyProduct(auction.Item, auction.CurrentBet.CurrentPrice);
-            auction.ShowWinner();
-
-        }
+        
         private void updateNextAuctions()
         {
             List<Auction> nextAuctions = Auctions.Where(auc => auc.IsActive == false && auc.IsOver == false && 

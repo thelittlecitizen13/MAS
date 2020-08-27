@@ -19,7 +19,7 @@ namespace MAS
             Screen screen77 = new Screen("LG 77", "77inch 4K Screen", 115);
             Auction screenAuction21 = new Auction(screen21, DateTime.Now.AddSeconds(3), 200, 5);
             Auction screenAuction24 = new Auction(screen24, DateTime.Now.AddSeconds(7), 300, 5);
-            Auction screenAuction27 = new Auction(screen27, DateTime.Now.AddSeconds(15), 400, 5);
+            Auction screenAuction27 = new Auction(screen27, DateTime.Now.AddSeconds(15),400, 5);
             Auction screenAuction32 = new Auction(screen32, DateTime.Now.AddSeconds(20), 800, 5);
             Auction screenAuction77 = new Auction(screen77, DateTime.Now.AddSeconds(30), 1200, 10);
             MamasAuction.AddAgent(segevH);
