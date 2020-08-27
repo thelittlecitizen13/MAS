@@ -9,7 +9,7 @@ namespace MAS
 {
     public class Auction
     {
-        public ConcurrentBag<Agent> Participants { get; set; }
+        
         public IAuctionItem Item { get; private set; }
 
         public int StartPrice { get; set; }
@@ -23,7 +23,7 @@ namespace MAS
         public Auction(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
         {
             Item = auctionItem;
-            Participants = new ConcurrentBag<Agent>();
+            
             IsActive = false;
             IsOver = false;
             StartDate = startDate;

@@ -25,18 +25,18 @@ namespace MAS
             _consoleColor = chooseConsoleColor();
             _ownedProducts = new List<IAuctionItem>();
         }
-        public void MakeBet(string message, Auction auction)   
+        public void MakeBet(string message, AuctionRunner runner)   
         {
             ThreadPool.QueueUserWorkItem(obj =>
                 {
                     Thread.CurrentThread.IsBackground = false;
-                    int currentBet = auction.CurrentBet.CurrentPrice;
-                    int priceJump = auction.CurrentBet.MinimunPriceJump;
-                    if (DoJoin(auction.Item, currentBet + priceJump, auction.StartPrice))
+                    int currentBet = runner.auction.CurrentBet.CurrentPrice;
+                    int priceJump = runner.auction.CurrentBet.MinimunPriceJump;
+                    if (DoJoin(runner.auction.Item, currentBet + priceJump, runner.auction.StartPrice))
                     {
                         int newBetPrice = generateNewBetPrice(currentBet + priceJump);
 
-                        auction.MakeBet(new AgentBet(newBetPrice, this));
+                        runner.MakeBet(new AgentBet(newBetPrice, this));
 
                     }
             });

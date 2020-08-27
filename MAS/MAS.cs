@@ -14,30 +14,35 @@ namespace MAS
         public List<AuctionRunner> AuctionRunners { get; set; }
         private List<Agent> _listedAgents;
         private List<AuctionRunner> _dueToBeginAuctions;
-        private event Notify _notifyAgents;
+        private AgentNotifier _notifier;
         private System.Timers.Timer _runAuctionsTimer { get; set; }
         public MAS()
         {
             AuctionRunners = new List<AuctionRunner>();
             _listedAgents = new List<Agent>();
             _dueToBeginAuctions = new List<AuctionRunner>();
+            _notifier = new AgentNotifier();
         }
         public void Start()
         {
+            PrepareAuctions();
             _runAuctionsTimer = SetInterval(RunAuctions, 5000);
+            
         }
         public void RunAuctions()
-        {
-
+        { 
             updateNextAuctions();
             List<AuctionRunner> nextAuctions = new List<AuctionRunner>(_dueToBeginAuctions);
-            Parallel.ForEach(nextAuctions ?? new List<AuctionRunner>(), auction =>
+            Parallel.ForEach(nextAuctions ?? new List<AuctionRunner>(), runner =>
             {
-                _dueToBeginAuctions.Remove(auction);
+                _dueToBeginAuctions.Remove(runner);
+                runner.RunAuction();
             });
+
             if (AuctionRunners?.Where(runner => runner.auction.IsOver == true).ToList().Count == AuctionRunners.Count)
             {
-                _notifyAgents?.Invoke("All auctions are over. See you next Time!");
+                string msg = "All auctions are over. See you next Time!";
+                _notifier.NotifyChange(msg);
                 _runAuctionsTimer.Stop();
             }
         }
@@ -46,7 +51,7 @@ namespace MAS
             Parallel.ForEach(AuctionRunners, (runner) =>
             {
                 Thread.CurrentThread.IsBackground = false;
-                _notifyAgents?.Invoke(runner.NewAuction());
+                _notifier.NotifyChange(runner.NewAuction());
 
                 foreach (var agent in _listedAgents)
                 {
@@ -69,12 +74,12 @@ namespace MAS
 
         public void AddAgent(Agent agent)
         {
-            _notifyAgents += agent.PrintToPersonalScreen;
+            _notifier.AddAgentToNotifyList(agent);
             _listedAgents.Add(agent);
         }
         public void CreateAuction(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
         {
-
+            AuctionRunners.Add(new AuctionRunner(auctionItem, startDate, startPrice, minimunJumpPrice));
         }
         private static System.Timers.Timer SetInterval(Action Act, int Interval)
         {

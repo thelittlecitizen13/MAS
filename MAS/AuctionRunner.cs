@@ -1,23 +1,28 @@
-﻿using System;
+﻿using MAS.Items;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
 namespace MAS
 {
     public class AuctionRunner
-    {
-        public event Notify NotifyAgents;
-        public event AskForBets GetAgentsBets;
+    {        
+        public ConcurrentBag<Agent> Participants {get; set;}
         private static object _lockMakeBet = new object();
         public Auction auction { get; set; }
+        private AgentNotifier _notifier;
 
-        public AuctionRunner()
+        public AuctionRunner(IAuctionItem auctionItem, DateTime startDate, int startPrice, int minimunJumpPrice)
         {
-
+            auction = new Auction(auctionItem, startDate, startPrice, minimunJumpPrice);
+            Participants = new ConcurrentBag<Agent>();
+            _notifier = new AgentNotifier();
         }
         public void RunAuction()
         {
-            if (auction.Participants.Count == 0)
+            if (Participants.Count == 0)
             {
                 EndAuction();
                 Console.WriteLine($"Auction over {auction.Item.Name}, UID {auction.Item.UniqueID} is closed due to no participants.");
@@ -32,7 +37,7 @@ namespace MAS
                 if (lastBetTime.AddSeconds(5) < DateTime.Now && auction.AuctionStage != 4)
                 {
                     auction.AuctionStage = 4;
-                    NotifyChange($"Last call for {auction.Item.Name} auction! Less then 3 seconds remaining for ");
+                    _notifier.NotifyChange($"Last call for {auction.Item.Name} auction! Less then 3 seconds remaining for ");
                 }
                 AskForNewBets();
                 Thread.Sleep(1000);
@@ -48,16 +53,13 @@ namespace MAS
         }
         public void addAgentToAuction(Agent agent)
         {
-            auction.Participants.Add(agent);
+            Participants.Add(agent);
             agent.PrintToPersonalScreen($"Welcome to {auction.Item.Name}`s auction!");
-            NotifyAgents += agent.PrintToPersonalScreen;
-            GetAgentsBets += agent.MakeBet;
+            _notifier.AddAgentToNotifyList(agent);
+            _notifier.AddAgentToBetList(agent);
 
         }
-        public void NotifyChange(string message)
-        {
-            NotifyAgents?.Invoke(message);
-        }
+        
         public void MakeBet(AgentBet bet)
         {
             lock (_lockMakeBet)
@@ -70,20 +72,20 @@ namespace MAS
                 {
                     if (auction.CurrentBet.UpdateBet(bet))
                     {
-                        NotifyChange($"{bet.BettingAgent.Name} is now leading the auction over {auction.Item.Name} with price tag of {bet.NewPrice}$");
+                        _notifier.NotifyChange($"{bet.BettingAgent.Name} is now leading the auction over {auction.Item.Name} with price tag of {bet.NewPrice}$");
                     }
                 }
             }
         }
         public void AskForNewBets()
-        {
-
+        { 
             //var agentsInvocationLis = GetAgentsBets?.GetInvocationList();
             //Parallel.ForEach(agentsInvocationLis, (agentMetod) =>
             //{
             //    agentMetod.DynamicInvoke($"Would you like to bet on {Item.Name}? Minimun bet: {CurrentBet.CurrentPrice + CurrentBet.MinimunPriceJump}$");
             //});
-            GetAgentsBets?.Invoke($"Would you like to bet on {auction.Item.Name}? Minimun bet: {auction.CurrentBet.CurrentPrice + auction.CurrentBet.MinimunPriceJump}$", auction);
+            string msg = $"Would you like to bet on {auction.Item.Name}? Minimun bet: {auction.CurrentBet.CurrentPrice + auction.CurrentBet.MinimunPriceJump}$";
+            _notifier.GetBets(msg, this);
         }
         public void ShowWinner()
         {
