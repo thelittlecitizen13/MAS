@@ -30,6 +30,7 @@ namespace MAS
                 Console.WriteLine($"Auction over {auction.Item.Name}, UID {auction.Item.UniqueID} is closed due to no participants.");
                 return;
             }
+            _notifier.NotifyChange($"Auction for {auction.Item.Name} started!");
             auction.IsActive = true;
             Thread.CurrentThread.IsBackground = false;             
             while (auction.IsOver == false)
@@ -108,6 +109,7 @@ namespace MAS
 
         public void EndAuction()
         {
+            _notifier.NotifyChange($"Auction for {auction.Item.Name} is over!");
             AuctionStage = 5;
             auction.IsOver = true;
             auction.IsActive = false;
